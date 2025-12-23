@@ -4,9 +4,8 @@ An interactive web-based typing practice tool to learn **Hindi Mangal font Alt c
 This project is designed for **CCC, DCA, ADCA students** and government exam preparation.
 
 ## 🔗 Live Demo
-👉 https://21mdarshadali.github.io/REPOSITORY-NAME/
+👉 https://21mdarshadali.github.io/Hindi-Mangal-Shortcut-Practice-Game/
 
-> (Replace `REPOSITORY-NAME` with your actual repo name)
 
 ---
 
