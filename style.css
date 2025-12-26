@@ -1,0 +1,267 @@
+
+        body {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .pulse-animation {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+        }
+
+        .success-animation {
+            animation: successPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes successPop {
+            0% {
+                transform: scale(1) rotate(0deg);
+            }
+
+            25% {
+                transform: scale(1.2) rotate(-5deg);
+            }
+
+            50% {
+                transform: scale(1.1) rotate(5deg);
+            }
+
+            75% {
+                transform: scale(1.15) rotate(-3deg);
+            }
+
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        .error-shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-10px);
+            }
+
+            75% {
+                transform: translateX(10px);
+            }
+        }
+
+
+
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            pointer-events: none;
+            animation: confetti-fall 2s linear forwards;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .streak-badge {
+            animation: badge-pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes badge-pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .glow {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            animation: sparkle 1.5s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+
+            0%,
+            100% {
+                opacity: 0;
+                transform: scale(0);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* =========================
+   CLEAN MOBILE RESPONSIVE
+   ========================= */
+
+        @media (max-width: 768px) {
+
+            /* Make app scrollable & simple */
+            #app {
+                padding: 10px;
+            }
+
+            /* Force single column layout */
+            #app>div {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 16px !important;
+            }
+
+            /* Reduce huge character size */
+            .pulse-animation span {
+                font-size: 4rem !important;
+            }
+
+            /* Card spacing */
+            .card-hover {
+                padding: 16px !important;
+                border-radius: 14px !important;
+            }
+
+            /* Heading */
+            h1 {
+                font-size: 1.4rem !important;
+            }
+
+            /* Input box – phone friendly */
+            #alt-code-input {
+                font-size: 1.6rem !important;
+                padding: 14px !important;
+                letter-spacing: 4px !important;
+            }
+
+            /* Buttons – thumb friendly */
+            button {
+                padding: 14px !important;
+                font-size: 1rem !important;
+            }
+
+
+
+            /* Keyboard reminder spacing */
+            #app div[style*="Keyboard Reminder"] {
+                padding: 16px !important;
+            }
+
+            /* SEO text */
+            section {
+                padding: 12px !important;
+                margin: 8px !important;
+            }
+
+            footer {
+                font-size: 12px !important;
+            }
+        }
+
+        /* Extra small phones */
+        @media (max-width: 480px) {
+
+            .pulse-animation span {
+                font-size: 3.2rem !important;
+            }
+
+            h1 {
+                font-size: 1.25rem !important;
+            }
+        }
+
+        /* ===== CLEAN MOBILE PROGRESS BAR ===== */
+
+        .mobile-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .mobile-progress .stat {
+            flex: 1;
+            text-align: center;
+        }
+
+        .mobile-progress .label {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .mobile-progress .value {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-progress {
+                flex-wrap: nowrap;
+            }
+        }
+   

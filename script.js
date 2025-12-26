@@ -1,0 +1,408 @@
+        const defaultConfig = {
+            background_color: "#f0f4f8",
+            surface_color: "#ffffff",
+            text_color: "#1e293b",
+            primary_action_color: "#3b82f6",
+            secondary_action_color: "#64748b",
+            game_title: "Hindi Mangal Alt Code Practice",
+            instruction_text: "Type the correct Alt code for the character shown",
+            button_text: "Next Challenge",
+            font_family: "Segoe UI",
+            font_size: 16
+        };
+
+        const hindiCharacters = [
+            { char: "!", code: "033", name: "exclamation mark" },
+            { char: '"', code: "034", name: "quotation mark" },
+            { char: "#", code: "035", name: "hash" },
+            { char: "$", code: "036", name: "dollar sign" },
+            { char: "%", code: "037", name: "percent" },
+            { char: "&", code: "038", name: "ampersand" },
+            { char: "'", code: "039", name: "apostrophe" },
+            { char: "(", code: "040", name: "left parenthesis" },
+            { char: ")", code: "041", name: "right parenthesis" },
+            { char: "*", code: "042", name: "asterisk" },
+            { char: "+", code: "043", name: "plus sign" },
+            { char: ",", code: "044", name: "comma" },
+            { char: "-", code: "045", name: "hyphen/minus" },
+            { char: ".", code: "046", name: "period" },
+            { char: "/", code: "047", name: "forward slash" },
+            { char: ":", code: "058", name: "colon" },
+            { char: ";", code: "059", name: "semicolon" },
+            { char: "<", code: "060", name: "less than" },
+            { char: "=", code: "061", name: "equals sign" },
+            { char: ">", code: "062", name: "greater than" },
+            { char: "?", code: "063", name: "question mark" },
+            { char: "@", code: "064", name: "at sign" },
+            { char: "[", code: "091", name: "left bracket" },
+            { char: "\\", code: "092", name: "backslash" },
+            { char: "]", code: "093", name: "right bracket" },
+            { char: "^", code: "094", name: "caret" },
+            { char: "_", code: "095", name: "underscore" },
+            { char: "`", code: "096", name: "backtick" },
+            { char: "{", code: "123", name: "left brace" },
+            { char: "|", code: "124", name: "pipe" },
+            { char: "}", code: "125", name: "right brace" },
+            { char: "~", code: "126", name: "tilde" }
+        ];
+
+        let currentCharacter = null;
+        let score = 0;
+        let attempts = 0;
+        let streak = 0;
+        let bestStreak = 0;
+
+        function getRandomCharacter() {
+            return hindiCharacters[Math.floor(Math.random() * hindiCharacters.length)];
+        }
+
+        function startNewChallenge() {
+            currentCharacter = getRandomCharacter();
+            const inputField = document.getElementById('alt-code-input');
+            const feedback = document.getElementById('feedback');
+            if (inputField) {
+                inputField.value = '';
+                inputField.focus();
+            }
+            if (feedback) {
+                feedback.textContent = '';
+                feedback.className = '';
+            }
+            renderUI();
+        }
+
+        function createConfetti() {
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7', '#a29bfe'];
+            for (let i = 0; i < 30; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                confetti.style.animationDuration = (Math.random() * 1 + 1.5) + 's';
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 2500);
+            }
+        }
+
+        function checkAnswer() {
+            const inputField = document.getElementById('alt-code-input');
+            const userInput = inputField.value.trim();
+            const feedback = document.getElementById('feedback');
+
+            attempts++;
+
+            if (userInput === currentCharacter.code) {
+                score++;
+                streak++;
+                if (streak > bestStreak) {
+                    bestStreak = streak;
+                }
+
+                const messages = [
+                    '🎉 Correct! Awesome!',
+                    '🌟 Perfect! Keep going!',
+                    '⚡ Amazing work!',
+                    '🎯 Bulls eye!',
+                    '��� You\'re on fire!',
+                    '✨ Brilliant!',
+                    '💫 Fantastic!'
+                ];
+
+                feedback.textContent = messages[Math.floor(Math.random() * messages.length)];
+                if (streak >= 3) {
+                    feedback.textContent += ` 🔥 ${streak} streak!`;
+                }
+
+                feedback.className = 'success-animation';
+                feedback.style.color = window.elementSdk?.config?.primary_action_color || defaultConfig.primary_action_color;
+                feedback.style.fontSize = `${(window.elementSdk?.config?.font_size || defaultConfig.font_size) * 1.25}px`;
+                feedback.style.fontWeight = 'bold';
+                feedback.style.marginTop = '16px';
+
+                if (streak >= 5) {
+                    createConfetti();
+                }
+
+                setTimeout(() => {
+                    startNewChallenge();
+                }, 1500);
+            } else {
+                streak = 0;
+                feedback.textContent = `❌ Incorrect. The correct code is Alt+${currentCharacter.code}`;
+                feedback.style.color = '#ef4444';
+                feedback.style.fontSize = `${(window.elementSdk?.config?.font_size || defaultConfig.font_size) * 1.125}px`;
+                feedback.style.marginTop = '16px';
+
+                const charDisplay = document.querySelector('.pulse-animation')?.parentElement;
+                if (charDisplay) {
+                    charDisplay.classList.add('error-shake');
+                    setTimeout(() => charDisplay.classList.remove('error-shake'), 500);
+                }
+            }
+
+            updateScore();
+        }
+
+        function updateScore() {
+            const scoreElement = document.getElementById('score-display');
+            if (scoreElement) {
+                const accuracy = attempts > 0 ? Math.round((score / attempts) * 100) : 0;
+                const config = window.elementSdk?.config || defaultConfig;
+                const baseSize = config.font_size || defaultConfig.font_size;
+
+                let streakDisplay = '';
+                if (streak >= 3) {
+                    streakDisplay = `<div class="streak-badge" style="display: inline-block; background: linear-gradient(135deg, #ff6b6b, #ee5a6f); color: white; padding: 6px 16px; border-radius: 20px; margin-left: 12px; font-size: ${baseSize * 0.875}px; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">🔥 ${streak} Streak!</div>`;
+                }
+
+                scoreElement.innerHTML = `
+  <div class="mobile-progress">
+    <div class="stat">
+      <div class="label">Score</div>
+      <div class="value">${score}/${attempts}</div>
+    </div>
+    <div class="stat">
+      <div class="label">Accuracy</div>
+      <div class="value">${accuracy}%</div>
+    </div>
+    <div class="stat">
+      <div class="label">Best Streak</div>
+      <div class="value">🔥 ${bestStreak}</div>
+    </div>
+  </div>
+`;
+
+            }
+        }
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+
+        function renderUI() {
+            const config = window.elementSdk?.config || defaultConfig;
+            const app = document.getElementById('app');
+            const customFont = config.font_family || defaultConfig.font_family;
+            const baseFontStack = 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
+            const baseSize = config.font_size || defaultConfig.font_size;
+
+            app.style.backgroundColor = config.background_color || defaultConfig.background_color;
+            app.style.fontFamily = `${customFont}, ${baseFontStack}`;
+
+            const charDisplay = `<span style="font-size: ${baseSize * 7}px; font-weight: bold; color: ${config.primary_action_color || defaultConfig.primary_action_color}; font-family: 'Courier New', monospace; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">${currentCharacter ? currentCharacter.char : ''}</span>`;
+
+            app.innerHTML = `
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; height: 100%; padding: 20px; box-sizing: border-box; align-items: center;">
+          
+          <!-- Left Side: Game Card -->
+          <div style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+            <header style="text-align: center; margin-bottom: 24px;">
+              <h1 style="font-size: ${baseSize * 2}px; font-weight: bold; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: 8px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">
+                ${config.game_title || defaultConfig.game_title} ⌨️
+              </h1>
+              <p style="font-size: ${baseSize}px; color: ${config.secondary_action_color || defaultConfig.secondary_action_color}; opacity: 0.9;">${config.instruction_text || defaultConfig.instruction_text}</p>
+            </header>
+          
+            <div class="card-hover" style="background: linear-gradient(135deg, ${config.surface_color || defaultConfig.surface_color} 0%, ${adjustBrightness(config.surface_color || defaultConfig.surface_color, -5)} 100%); border-radius: 20px; padding: 32px 24px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); border: 2px solid ${adjustBrightness(config.surface_color || defaultConfig.surface_color, -10)}; position: relative; overflow: hidden;">
+              <div style="position: absolute; top: 10px; right: 10px; font-size: ${baseSize * 3}px; opacity: 0.1;">⌨️</div>
+              
+              <div style="text-align: center; margin-bottom: 24px; background: linear-gradient(135deg, ${adjustBrightness(config.primary_action_color || defaultConfig.primary_action_color, 40)} 0%, ${adjustBrightness(config.primary_action_color || defaultConfig.primary_action_color, 50)} 100%); padding: 20px; border-radius: 16px; position: relative;">
+                <div style="margin-bottom: 16px;" class="pulse-animation float-animation">${charDisplay}</div>
+                <div style="font-size: ${baseSize * 1.125}px; color: ${config.text_color || defaultConfig.text_color}; background-color: ${config.surface_color || defaultConfig.surface_color}; display: inline-block; padding: 6px 16px; border-radius: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); font-weight: 600;">
+                  ${currentCharacter ? currentCharacter.name : ''}
+                </div>
+              </div>
+              
+              <div style="margin-bottom: 20px;">
+                <label for="alt-code-input" style="display: block; font-size: ${baseSize}px; font-weight: 600; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: 8px;">💻 Enter Alt Code:</label>
+                
+                <input 
+                type="tel"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                id="alt-code-input"
+                placeholder="e.g., 033"
+                maxlength="3"
+                style="width: 100%; padding: 14px 18px; font-size: ${baseSize * 1.5}px; border: 3px solid ${config.secondary_action_color || defaultConfig.secondary_action_color}; border-radius: 12px; background-color: ${config.background_color || defaultConfig.background_color}; color: ${config.text_color || defaultConfig.text_color}; box-sizing: border-box; text-align: center; font-weight: bold; letter-spacing: 3px; transition: all 0.3s ease; font-family: 'Courier New', monospace;"
+                onfocus="this.style.borderColor='${config.primary_action_color || defaultConfig.primary_action_color}'; this.style.boxShadow='0 0 15px rgba(59, 130, 246, 0.4)'"
+                onblur="this.style.borderColor='${config.secondary_action_color || defaultConfig.secondary_action_color}'; this.style.boxShadow='none'"
+                />
+              </div>
+              
+              <button 
+                id="check-button"
+                style="width: 100%; padding: 14px; font-size: ${baseSize * 1.125}px; font-weight: 700; color: #ffffff; background: linear-gradient(135deg, ${config.primary_action_color || defaultConfig.primary_action_color} 0%, ${adjustBrightness(config.primary_action_color || defaultConfig.primary_action_color, -15)} 100%); border: none; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;"
+                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(59, 130, 246, 0.6)'"
+                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(59, 130, 246, 0.4)'"
+              >✓ Check Answer</button>
+              
+              <button 
+                id="next-button"
+                style="width: 100%; padding: 12px; font-size: ${baseSize}px; font-weight: 600; color: ${config.text_color || defaultConfig.text_color}; background-color: transparent; border: 2px solid ${config.secondary_action_color || defaultConfig.secondary_action_color}; border-radius: 12px; cursor: pointer; transition: all 0.3s ease;"
+                onmouseover="this.style.backgroundColor='${config.secondary_action_color || defaultConfig.secondary_action_color}'; this.style.color='#ffffff'; this.style.transform='scale(1.02)'"
+                onmouseout="this.style.backgroundColor='transparent'; this.style.color='${config.text_color || defaultConfig.text_color}'; this.style.transform='scale(1)'"
+              >⏭️ ${config.button_text || defaultConfig.button_text}</button>
+              
+              <div id="feedback"></div>
+            </div>
+          </div>
+
+          <!-- Right Side: Stats & Tips -->
+<div style="display: flex; flex-direction: column; gap: 16px;">
+            
+            <!-- Score Card -->
+            <div class="card-hover" style="background: linear-gradient(135deg, ${config.surface_color || defaultConfig.surface_color} 0%, ${adjustBrightness(config.surface_color || defaultConfig.surface_color, -5)} 100%); border-radius: 20px; padding: 24px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12); border: 2px solid ${adjustBrightness(config.surface_color || defaultConfig.surface_color, -10)};">
+              <div style="text-align: center; margin-bottom: 12px;">
+                <h2 style="font-size: ${baseSize * 1.5}px; font-weight: bold; color: ${config.text_color || defaultConfig.text_color}; margin: 0; margin-bottom: 16px;">📊 Your Progress</h2>
+              </div>
+             <div id="score-display"
+     style="font-size: ${baseSize * 1.125}px; color: ${config.text_color}; width:100%;">
+Score: <strong>0</strong> / 0 (0% accuracy)</div>
+            </div>
+
+            <!-- Keyboard Visual -->
+            <div class="card-hover" style="background: linear-gradient(135deg, ${adjustBrightness(config.primary_action_color || defaultConfig.primary_action_color, 35)} 0%, ${adjustBrightness(config.primary_action_color || defaultConfig.primary_action_color, 45)} 100%); border-radius: 20px; padding: 24px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12); border: 2px solid ${adjustBrightness(config.surface_color || defaultConfig.surface_color, -10)};">
+              <div style="text-align: center;">
+                <div style="font-size: ${baseSize * 1.25}px; font-weight: bold; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: 16px;">⌨️ Keyboard Reminder</div>
+                <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 12px;">
+                  <div style="background-color: ${config.surface_color || defaultConfig.surface_color}; padding: 12px 20px; border-radius: 8px; box-shadow: 0 3px 8px rgba(0,0,0,0.2); font-size: ${baseSize * 1.125}px; font-weight: bold; color: ${config.text_color || defaultConfig.text_color};">Alt</div>
+                  <div style="font-size: ${baseSize * 1.5}px; display: flex; align-items: center; color: ${config.text_color || defaultConfig.text_color};">+</div>
+                  <div style="background-color: ${config.surface_color || defaultConfig.surface_color}; padding: 12px 20px; border-radius: 8px; box-shadow: 0 3px 8px rgba(0,0,0,0.2); font-size: ${baseSize * 1.125}px; font-weight: bold; color: ${config.text_color || defaultConfig.text_color}; font-family: 'Courier New', monospace; letter-spacing: 2px;">0 3 2</div>
+                </div>
+                <p style="font-size: ${baseSize * 0.875}px; color: ${config.text_color || defaultConfig.text_color}; margin: 0; line-height: 1.5; opacity: 0.9;">Hold Alt, type the code on numpad, then release Alt</p>
+              </div>
+            </div>
+
+            <!-- Character List Preview -->
+            <div class="card-hover" style="background: linear-gradient(135deg, ${config.surface_color || defaultConfig.surface_color} 0%, ${adjustBrightness(config.surface_color || defaultConfig.surface_color, -5)} 100%); border-radius: 20px; padding: 24px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12); border: 2px solid ${adjustBrightness(config.surface_color || defaultConfig.surface_color, -10)};">
+              <div style="text-align: center; margin-bottom: 12px;">
+                <div style="font-size: ${baseSize * 1.125}px; font-weight: bold; color: ${config.text_color || defaultConfig.text_color};">✨ Characters You're Learning</div>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+                ${shuffleArray(hindiCharacters).map(ch => `<span style="background: linear-gradient(135deg, ${adjustBrightness(config.secondary_action_color || defaultConfig.secondary_action_color, 30)} 0%, ${adjustBrightness(config.secondary_action_color || defaultConfig.secondary_action_color, 40)} 100%); padding: 6px 10px; border-radius: 8px; font-size: ${baseSize}px; font-weight: bold; font-family: 'Courier New', monospace; color: ${config.text_color || defaultConfig.text_color};">${ch.char === ' ' ? '␣' : ch.char}</span>`).join('')}
+              </div>
+            </div>
+
+          </div>
+        </div>
+      `;
+
+            document.getElementById('check-button').addEventListener('click', () => {
+                checkAnswer();
+                setTimeout(() => {
+                    document.getElementById('alt-code-input')?.focus();
+                }, 50);
+            });
+
+            document.getElementById('next-button').addEventListener('click', () => {
+                startNewChallenge();
+                setTimeout(() => {
+                    document.getElementById('alt-code-input')?.focus();
+                }, 50);
+            });
+
+            const inputField = document.getElementById('alt-code-input');
+            inputField.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    checkAnswer();
+                    setTimeout(() => {
+                        document.getElementById('alt-code-input')?.focus();
+                    }, 50);
+                }
+                if (!/[0-9]/.test(e.key)) {
+                    e.preventDefault();
+                }
+            });
+
+            inputField.focus();
+            updateScore();
+        }
+
+        function adjustBrightness(color, percent) {
+            const num = parseInt(color.replace("#", ""), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = Math.min(255, Math.max(0, (num >> 16) + amt));
+            const G = Math.min(255, Math.max(0, (num >> 8 & 0x00FF) + amt));
+            const B = Math.min(255, Math.max(0, (num & 0x0000FF) + amt));
+            return "#" + (0x1000000 + (R << 16) + (G << 8) + B).toString(16).slice(1);
+        }
+
+        async function onConfigChange(config) {
+            renderUI();
+        }
+
+        if (window.elementSdk) {
+            window.elementSdk.init({
+                defaultConfig,
+                onConfigChange,
+                mapToCapabilities: (config) => ({
+                    recolorables: [
+                        {
+                            get: () => config.background_color || defaultConfig.background_color,
+                            set: (value) => {
+                                config.background_color = value;
+                                window.elementSdk.setConfig({ background_color: value });
+                            }
+                        },
+                        {
+                            get: () => config.surface_color || defaultConfig.surface_color,
+                            set: (value) => {
+                                config.surface_color = value;
+                                window.elementSdk.setConfig({ surface_color: value });
+                            }
+                        },
+                        {
+                            get: () => config.text_color || defaultConfig.text_color,
+                            set: (value) => {
+                                config.text_color = value;
+                                window.elementSdk.setConfig({ text_color: value });
+                            }
+                        },
+                        {
+                            get: () => config.primary_action_color || defaultConfig.primary_action_color,
+                            set: (value) => {
+                                config.primary_action_color = value;
+                                window.elementSdk.setConfig({ primary_action_color: value });
+                            }
+                        },
+                        {
+                            get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+                            set: (value) => {
+                                config.secondary_action_color = value;
+                                window.elementSdk.setConfig({ secondary_action_color: value });
+                            }
+                        }
+                    ],
+                    borderables: [],
+                    fontEditable: {
+                        get: () => config.font_family || defaultConfig.font_family,
+                        set: (value) => {
+                            config.font_family = value;
+                            window.elementSdk.setConfig({ font_family: value });
+                        }
+                    },
+                    fontSizeable: {
+                        get: () => config.font_size || defaultConfig.font_size,
+                        set: (value) => {
+                            config.font_size = value;
+                            window.elementSdk.setConfig({ font_size: value });
+                        }
+                    }
+                }),
+                mapToEditPanelValues: (config) => new Map([
+                    ["game_title", config.game_title || defaultConfig.game_title],
+                    ["instruction_text", config.instruction_text || defaultConfig.instruction_text],
+                    ["button_text", config.button_text || defaultConfig.button_text]
+                ])
+            });
+        }
+
+        startNewChallenge();
+   
